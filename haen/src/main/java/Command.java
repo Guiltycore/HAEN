@@ -9,21 +9,31 @@ import java.util.function.Consumer;
  */
 public class Command extends ListenerAdapter{
     private HashMap<String,Consumer<MessageReceivedEvent>> Commands;
+    private HashMap<String,String> description;
     private String commandCall;
 
     public Command() {
         this.Commands= new HashMap<String,Consumer<MessageReceivedEvent>>();
+        this.description = new HashMap<String,String>();
         this.commandCall = "$";
     }
-    public void addCommand(Consumer<MessageReceivedEvent> command,String name){
+    public void addCommand(Consumer<MessageReceivedEvent> command,String name,String de){
         Commands.put(name, command);
+        description.put(name,de);
     }
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String msg=event.getMessage().getContent();
         if(msg.startsWith(commandCall)&&msg.length()>2){
             String cmd=msg.substring(1,msg.contains(" ")?msg.indexOf(" "):msg.length());
-            if(Commands.containsKey(cmd)){
+            if(cmd.contentEquals("help")){
+                final StringBuilder send= new StringBuilder("Help command list: \n");
+                description.forEach((name,description) -> {
+                    send.append("   "+name+" : "+description+"\n");
+                });
+                event.getChannel().sendMessage(send.toString()).complete();
+            }
+            else if(Commands.containsKey(cmd)){
                 Commands.get(cmd).accept(event);
             }
             else{
@@ -31,5 +41,4 @@ public class Command extends ListenerAdapter{
             }
         }
     }
-
 }

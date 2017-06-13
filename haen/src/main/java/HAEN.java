@@ -31,61 +31,76 @@ public class HAEN {
                         javaContent.put(s.substring(s.indexOf("class")+5,s.indexOf(s.contains("extends")?"extends":s.contains("implements")?"implements":"{")).replaceAll(" ",""),s);
                     }
                 }
-            Thread thread = new Thread(new Runnable() {
-                Process p;
+            if(javaContent.containsKey(classToPlay)){
+                Thread thread = new Thread(new Runnable() {
+                    Process p;
 
-                public void run() {
-                    try {
-                        javaContent.forEach((name,content)->{
-                                    try{
-                                        FileWriter f=new FileWriter("./"+name+".java");
-                                        f.write(content);
-                                        f.flush();
-                                        f.close();
-                                        files.put(name, new File("./"+name+".java"));
-                                    }catch (Exception e) {
-                                        return;
+                    public void run() {
+                        try {
+                            javaContent.forEach((name,content)->{
+                                        try{
+                                            System.out.println("");
+                                            FileWriter f=new FileWriter("./"+name+".java");
+                                            f.write(content);
+                                            f.flush();
+                                            f.close();
+                                            files.put(name, new File("./"+name+".java"));
+                                        }catch (Exception e) {
+                                            return;
+                                        }
                                     }
+
+                            );
+                            files.forEach((name,file)->{
+                                try{
+                                    String msg ="";
+                                    String line;
+                                    p = Runtime.getRuntime().exec("javac "+file.getAbsolutePath());
+                                    BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+
+                                    while ((line = input.readLine()) != null) {
+                                        msg += line.length()>0?line+"\n":"";
+                                    }
+                                    if(msg.length()>0){
+                                        event.getChannel().sendMessage("```"+msg+"```").complete();
+                                    }
+                                }catch (Exception e) {
+                                    return;
                                 }
-
-                        );
-                        files.forEach((name,file)->{
-                            try{
-                                String msg ="```";
-                                String line;
-                                 p = Runtime.getRuntime().exec("javac "+file.getAbsolutePath());
-                                 BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-
-                                while ((line = input.readLine()) != null) {
-                                    msg += line + "\n";
-                                }
-                                event.getChannel().sendMessage(msg+"`   ``").complete();
-                            }catch (Exception e) {
-                                return;
-                            }
-                        });
-                        String msg ="```";
-                        String line;
-                        p = Runtime.getRuntime().exec("java " + classToPlay);
-                        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                            });
+                            String msg ="";
+                            String line;
+                            p = Runtime.getRuntime().exec("java " + classToPlay);
+                            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
                             while ((line = input.readLine()) != null) {
-                                msg += line + "\n";
+                                msg += line.length()>0?line+"\n":"";
                             }
-                            event.getChannel().sendMessage(msg+"`   ``").complete();
+
+                            if(msg.length()>0){
+                                event.getChannel().sendMessage("```"+msg+"```").complete();
+                            }
                             files.forEach((name,file)->{
                                 file.delete();
                                 new File("./"+name+".class").delete();
                             });
-                    }catch (Exception e) {
-                        return;
+                        }catch (Exception e) {
+                            return;
+                        }
                     }
-                }
-            });
-            thread.run();
+                });
+                thread.run();
+            }
+            else{
+                event.getChannel().sendMessage("Incorrect command pattern.");
+            }
 
 
-                },"java"
+                },"java", "Compile java code: $java [main name class] [Complete file content between three '`' at the beginning and at the end like (xxxx).]...\n          Exemple: $java HelloWorld ```public class HelloWorld{\n" +
+                "\t\tpublic static void main(String[] args){\n          " +
+                "\t\t\tSystem.out.println(\"Hello world\");\n" +
+                "\t\t}\n" +
+                "\t}``` "
 
         );
 
