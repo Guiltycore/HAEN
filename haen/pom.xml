@@ -13,12 +13,26 @@
             <artifactId>JDA</artifactId>
             <version>3.1.1_212</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.SethX3</groupId>
+            <artifactId>Utopiai</artifactId>
+            <version>master</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
             <id>jcenter</id>
             <name>jcenter-bintray</name>
             <url>http://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
     <build>

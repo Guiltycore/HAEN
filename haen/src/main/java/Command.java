@@ -10,12 +10,16 @@ import java.util.function.Consumer;
 public class Command extends ListenerAdapter{
     private HashMap<String,Consumer<MessageReceivedEvent>> Commands;
     private HashMap<String,String> description;
-    private String commandCall;
+    static String commandCall;
+    public static HashMap<String, Thread> runningThreads = new HashMap<>();
+
+    public int scanLimit = 5;
 
     public Command() {
         this.Commands= new HashMap<String,Consumer<MessageReceivedEvent>>();
         this.description = new HashMap<String,String>();
-        this.commandCall = "$";
+        runningThreads= new HashMap<String,Thread>();
+        commandCall = "$";
     }
     public void addCommand(Consumer<MessageReceivedEvent> command,String name,String de){
         Commands.put(name, command);

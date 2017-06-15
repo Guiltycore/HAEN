@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.SethX3:Utopiai:master">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/SethX3/Utopiai/master/Utopiai-master.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/SethX3/Utopiai/master/Utopiai-master-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/SethX3/Utopiai/master/Utopiai-master-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
