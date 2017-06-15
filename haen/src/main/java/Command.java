@@ -1,13 +1,15 @@
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
-
 /**
  * Created by Yves on 13/06/2017.
  */
-public class Command extends ListenerAdapter{
+public class Command extends ListenerAdapter {
     private HashMap<String,Consumer<MessageReceivedEvent>> Commands;
     private HashMap<String,String> description;
     static String commandCall;
@@ -44,5 +46,13 @@ public class Command extends ListenerAdapter{
                 event.getChannel().sendMessage("Command not found :'( ");
             }
         }
+    }
+    @Override
+    public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+        event.getGuild().getPublicChannel().sendMessage("Good bye "+event.getMember().getNickname()+",you little son of a bitch <3 ");
+    }
+    @Override
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        event.getGuild().getPublicChannel().sendMessage("Welcome "+event.getMember().getNickname()+" <3 ");
     }
 }
