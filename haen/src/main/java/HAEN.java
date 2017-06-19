@@ -1,12 +1,14 @@
-import com.sethsutopia.utopiai.osu.*;
 
+
+import com.sethsutopia.utopiai.restful.RestfulException;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
-
+import com.sethsutopia.utopiai.osu.OSU;
+import com.sethsutopia.utopiai.osu.*;
 import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.io.*;
@@ -147,63 +149,44 @@ public class HAEN {
         //OsuPlayerDisplay
 
         Command.addCommand(event -> {
-            OSUPlayer player;
+            OSUPlayer player = null;
             String[]  command =event.getMessage().getContent().split(" ");
-            if(osu.userExists(command[1])){
+                try{
 
-                switch (command[2]){
+
+                    switch (command[2]){
                     case "mania":
-                        player=osu.getUser(command[1],3);
+                        player=osu.getUser(command[1], OSU.OsuGameMode.MANIA);
                         break;
                     case "std":
-                        player=osu.getUser(command[1],0);
+                        player=osu.getUser(command[1],OSU.OsuGameMode.OSU);
                         break;
                     case "taiko":
-                        player=osu.getUser(command[1],1);
+                        player=osu.getUser(command[1],OSU.OsuGameMode.TAIKO);
                         break;
                     case "ctb":
-                        player=osu.getUser(command[1],2);
+                        player=osu.getUser(command[1],OSU.OsuGameMode.CATCHTHEBEAT);
                         break;
                     default:
                         player=null;
                         break;
+                    }
+                }catch (RestfulException e){
+
                 }
                 if(player!=null){
                     try{
-                        MessageEmbedImpl ms = new MessageEmbedImpl().setColor(Color.YELLOW).setAuthor(new MessageEmbed.AuthorInfo(player.getUsername(),player.getProfileUrl(),osuURLAvatar(getURLContent(player.getProfileUrl())),"a.ppy.sh"))
-                                .setDescription("Country: "+player.getCountry()+"\nAccuracy: "+player.getAccAsString()+"\n Rank: "+player.getPPRank()+"\n Country rank: "+player.getPPCountryRank()+"\n PP: "+player.getPPRaw()+"\n Level: "+player.getLevel()+"\n Lastest map played: "+player.getRecentPlayMap().getTitle());
+                        MessageEmbedImpl ms = new MessageEmbedImpl().setColor(Color.YELLOW).setAuthor(new MessageEmbed.AuthorInfo(player.getUsername(),player.getProfileUrl(),player.getAvatarUrl(),"a.ppy.sh"))
+                                .setDescription("Country: "+player.getCountry()+"\nAccuracy: "+player.getAccPretty()+"\n Rank: "+player.getPPRank()+"\n Country rank: "+player.getPPCountryRank()+"\n PP: "+player.getPPRaw()+"\n Level: "+player.getLevel()+"\n Lastest map played: "+osu.getBeatMap(player.getRecentPlay().getBeatMapID()));
                         event.getChannel().sendMessage(ms);
                     }catch (Exception e){
 
                     }
                 }
 
-            }
+
         },"osu","Displays player informations about a osu player. $osu [playername] {std|taiko|mania|ctb}\n *Exemple:* $osu WiwiTriggeredMe std");
 
         haen.addEventListener(Command);
-    }
-
-    private String getURLContent(String url) throws Exception{
-        URL x = new URL(url);
-        URLConnection con = x.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String l;
-        String result ="";
-        while ((l=in.readLine())!=null) {
-            result+=l;
-        }
-
-
-        return result;
-    }
-
-    private String osuURLAvatar(String content){
-        for(String a:content.split("[\\\"\\\"]")){
-            if(a.contains("a.ppy.sh")){
-                return a;
-            }
-        }
-        return "";
     }
 }
