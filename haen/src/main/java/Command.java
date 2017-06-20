@@ -3,6 +3,7 @@ import com.sethsutopia.utopiai.osu.OSUPlayer;
 import com.sethsutopia.utopiai.osu.RecentPlay;
 import com.sethsutopia.utopiai.osu.events.GainedPPEvent;
 import com.sethsutopia.utopiai.restful.RestfulException;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.impl.MessageEmbedImpl;
@@ -27,7 +28,7 @@ import java.util.function.Consumer;
 /**
  * Created by Yves on 13/06/2017.
  */
-public class Command extends ListenerAdapter implements OSUListener {
+public class Command extends ListenerAdapter /*implements OSUListener*/ {
     private HashMap<String, Consumer<MessageReceivedEvent>> Commands;
     private HashMap<String, String> description;
     static String commandCall;
@@ -76,7 +77,7 @@ public class Command extends ListenerAdapter implements OSUListener {
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         event.getGuild().getPublicChannel().sendMessage("Welcome " + event.getMember().getNickname() + " <3 ");
     }
-
+/*
     @Override
     public void onPlayerGainedPP(GainedPPEvent event) {
         final OSUPlayer player = event.getPlayer();
@@ -89,11 +90,20 @@ public class Command extends ListenerAdapter implements OSUListener {
 
         players.get(event.getPlayer().getUserID()).forEach(element -> {
             try {
-            MessageEmbedImpl ms = new MessageEmbedImpl().setColor(Color.LIGHT_GRAY).setAuthor(new MessageEmbed.AuthorInfo(player.getUsername(), player.getProfileUrl(), player.getAvatarUrl(), "a.ppy.sh"))
-                    .setDescription("__"+map.getTitle()+" ~ "+map.getArtist()+":"+event.getPPGainedPretty()+"pp __\n○ *"+play.getCombo()+" ¤ "+play.getCountGeki()+"/"+play.getCount300()+"/"+play.getCount50()+"/"+play.getCountMiss()+" ¤ "+play.getScore()+"\n○ "+
-                    play.getMods()+" ¤ "+map.getDiffRating())
-                    .setImage(new MessageEmbed.ImageInfo(osuURL(getURLContent("https://osu.ppy.sh/b/"+map.getBeatMapID())),"https://b.ppy.sh/",166,120));
-            element.sendMessage(ms);
+                EmbedBuilder ms = new EmbedBuilder();
+                ms.setThumbnail(player.getAvatarUrl());
+                ms.setImage(osuURL(getURLContent("https://osu.ppy.sh/b/"+map.getBeatMapID())));
+                ms.setDescription("__"+map.getTitle()+" ~ "+map.getArtist()+" "+map.getDiffRating() +"* :"+event.getPPGainedPretty()+"pp __");
+                ms.setTitle(player.getUsername(),player.getProfileUrl());
+                ms.addField("Combo","x"+play.getCombo(),true);
+                ms.addField("Score",""+play.getScore(),true);
+                ms.addField("MAX/300/200/100/50/MISS",play.getCountGeki()+"/"+play.getCount300()+"/"+play.getCountKatu()+"/"+play.getCount100()+"/"+play.getCount50()+"/"+play.getCountMiss(),true);
+                ms.addField("Mods", play.getMods(),true);
+            //MessageEmbedImpl ms = new MessageEmbedImpl().setColor(Color.LIGHT_GRAY).setAuthor(new MessageEmbed.AuthorInfo(player.getUsername(), player.getProfileUrl(), player.getAvatarUrl(), "a.ppy.sh"))
+              //      .setDescription("__"+map.getTitle()+" ~ "+map.getArtist()+":"+event.getPPGainedPretty()+"pp __\n○ *"+play.getCombo()+" ¤ "++" ¤ "+play.getScore()+"\n○ "+
+                //    play.getMods()+" ¤ "+map.getDiffRating())
+                 //   .setImage(new MessageEmbed.ImageInfo(,"https://b.ppy.sh/",166,120));
+                     element.sendMessage(ms.build());
             } catch (Exception e) {
 
             }
@@ -102,7 +112,7 @@ public class Command extends ListenerAdapter implements OSUListener {
         } catch (RestfulException e) {
 
         }
-    }
+    }*/
     private String getURLContent(String url) throws Exception{
         URL x = new URL(url);
         URLConnection con = x.openConnection();

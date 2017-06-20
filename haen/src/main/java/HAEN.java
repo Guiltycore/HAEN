@@ -2,6 +2,7 @@
 
 import com.sethsutopia.utopiai.restful.RestfulException;
 import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -144,48 +145,47 @@ public class HAEN {
                 Command.runningThreads.put(event.getGuild().getId(), thread);
                 thread.run();
             }
-        }, "scan", "Displays differents open ports from an IP address. $scan [IP] \n *Exemple:* $scan 127.0.0.1");
+        }, "scan", "Displays differents open ports from an IP address. $scan [IP] \n          *Exemple:* $scan 127.0.0.1");
 
         //OsuPlayerDisplay
 
         Command.addCommand(event -> {
-            OSUPlayer player = null;
+            OSUPlayer player =null;
             String[]  command =event.getMessage().getContent().split(" ");
+            String msg = event.getMessage().getContent();
                 try{
-
-
-                    switch (command[2]){
-                    case "mania":
+                    if(msg.contains("mania"))
                         player=osu.getUser(command[1], OSU.OsuGameMode.MANIA);
-                        break;
-                    case "std":
+                    else if(msg.contains("std"))
                         player=osu.getUser(command[1],OSU.OsuGameMode.OSU);
-                        break;
-                    case "taiko":
+                    else if(msg.contains("taiko"))
                         player=osu.getUser(command[1],OSU.OsuGameMode.TAIKO);
-                        break;
-                    case "ctb":
+                    else if(msg.contains("ctb"))
                         player=osu.getUser(command[1],OSU.OsuGameMode.CATCHTHEBEAT);
-                        break;
-                    default:
-                        player=null;
-                        break;
+                    if(player!=null) {
+                        EmbedBuilder ms = new EmbedBuilder();
+                        ms.setTitle(player.getUsername(),player.getProfileUrl());
+                        ms.setColor(Color.CYAN);
+                        ms.setThumbnail(player.getAvatarUrl());
+                        ms.addField(new MessageEmbed.Field("Country",player.getCountry(),true));
+                        ms.addField(new MessageEmbed.Field("Country rank",""+player.getPPCountryRank(),true));
+                        ms.addField(new MessageEmbed.Field("Rank", ""+player.getPPRank(),true));
+                        ms.addField(new MessageEmbed.Field("PP",""+ player.getPPRaw(),true));
+                        ms.addField(new MessageEmbed.Field("Accuracy",""+ player.getAccPretty(),true));
+                        ms.addField(new MessageEmbed.Field("Level",""+player.getLevel(),true));
+
+                        event.getChannel().sendMessage(ms.build()).complete();
+
                     }
+
                 }catch (RestfulException e){
+                        event.getChannel().sendMessage("a").complete();
 
                 }
-                if(player!=null){
-                    try{
-                        MessageEmbedImpl ms = new MessageEmbedImpl().setColor(Color.YELLOW).setAuthor(new MessageEmbed.AuthorInfo(player.getUsername(),player.getProfileUrl(),player.getAvatarUrl(),"a.ppy.sh"))
-                                .setDescription("Country: "+player.getCountry()+"\nAccuracy: "+player.getAccPretty()+"\n Rank: "+player.getPPRank()+"\n Country rank: "+player.getPPCountryRank()+"\n PP: "+player.getPPRaw()+"\n Level: "+player.getLevel()+"\n Lastest map played: "+osu.getBeatMap(player.getRecentPlay().getBeatMapID()));
-                        event.getChannel().sendMessage(ms);
-                    }catch (Exception e){
-
-                    }
-                }
 
 
-        },"osu","Displays player informations about a osu player. $osu [playername] {std|taiko|mania|ctb}\n *Exemple:* $osu WiwiTriggeredMe std");
+
+        },"osu","Displays player informations about a osu player. $osu [playername] {std|taiko|mania|ctb}\n          *Exemple:* $osu WiwiTriggeredMe std");
 
         haen.addEventListener(Command);
     }
