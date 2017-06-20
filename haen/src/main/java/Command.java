@@ -129,7 +129,7 @@ public class Command extends ListenerAdapter /*implements OSUListener*/ {
 
     private String osuURL(String content){
         for(String a:content.split("[\\\"\\\"]")){
-            if(a.contains("beatmapTab active")){
+            if(a.contains("b.ppy.sh")){
                 return a;
             }
         }
